@@ -26,6 +26,10 @@ function App() {
   const initialDistance = useRef<number | null>(null);
   const initialZoom = useRef<number>(1);
 
+  // PWA Install Prompt State
+  const [installPrompt, setInstallPrompt] = useState<any>(null);
+  const [showInstallBanner, setShowInstallBanner] = useState(false);
+
   const toggleFilter = (key: keyof typeof filters) => {
     setFilters(f => ({ ...f, [key]: !f[key] }));
   };
@@ -44,6 +48,34 @@ function App() {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+  };
+
+  // PWA Install Logic
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e: any) => {
+      e.preventDefault();
+      setInstallPrompt(e);
+      setShowInstallBanner(true);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
+    // Check if already installed
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+      setShowInstallBanner(false);
+    }
+
+    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (!installPrompt) return;
+    installPrompt.prompt();
+    const { outcome } = await installPrompt.userChoice;
+    if (outcome === 'accepted') {
+      setInstallPrompt(null);
+      setShowInstallBanner(false);
+    }
   };
 
   // Pinch to zoom logic
@@ -88,7 +120,29 @@ function App() {
   }, [zoom]);
 
   return (
-    <div className="h-screen w-screen bg-black flex items-center justify-center overflow-hidden font-sans">
+    <div className="h-screen w-screen bg-black flex items-center justify-center overflow-hidden font-sans relative">
+      {/* PWA Install Banner */}
+      {showInstallBanner && (
+        <div className="absolute top-0 left-0 right-0 z-[100] p-4 animate-in slide-in-from-top duration-500">
+          <div className="bg-[#10b981] text-black p-4 rounded-2xl flex items-center justify-between shadow-[0_0_30px_rgba(16,185,129,0.4)]">
+            <div className="flex flex-col">
+              <span className="text-xs font-black uppercase tracking-wider">Install Pitchside</span>
+              <span className="text-[10px] font-bold opacity-80">Add to home screen for the best experience</span>
+            </div>
+            <div className="flex gap-2">
+              <button 
+                onClick={() => setShowInstallBanner(false)}
+                className="px-3 py-1.5 rounded-lg bg-black/10 text-[10px] font-black uppercase hover:bg-black/20"
+              >Later</button>
+              <button 
+                onClick={handleInstallClick}
+                className="px-4 py-1.5 rounded-lg bg-black text-white text-[10px] font-black uppercase shadow-lg active:scale-95 transition-all"
+              >Install</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div 
         ref={zoomContainerRef}
         className="flex flex-col h-full w-full max-w-[480px] bg-[#050505] text-[#e4e4e7] overflow-hidden shadow-2xl transition-transform duration-75 origin-center"

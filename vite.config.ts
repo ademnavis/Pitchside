@@ -7,7 +7,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'robots.txt'], // optional extra assets
+      includeAssets: ['favicon.svg'],
       manifest: {
         name: 'Pitchside Analysis',
         short_name: 'Pitchside',
@@ -16,23 +16,23 @@ export default defineConfig({
         background_color: '#050505',
         display: 'standalone',
         orientation: 'portrait',
-        start_url: '/', // added start URL
+        start_url: '/',
         icons: [
           {
-            src: 'pwa-192x192.png',
+            src: 'favicon.svg',
             sizes: '192x192',
-            type: 'image/png'
+            type: 'image/svg+xml'
           },
           {
-            src: 'pwa-512x512.png',
+            src: 'favicon.svg',
             sizes: '512x512',
-            type: 'image/png'
+            type: 'image/svg+xml'
           },
           {
-            src: 'pwa-512x512.png',
+            src: 'favicon.svg',
             sizes: '512x512',
-            type: 'image/png',
-            purpose: 'maskable'
+            type: 'image/svg+xml',
+            purpose: 'any maskable'
           }
         ]
       }
