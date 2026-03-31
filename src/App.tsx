@@ -279,15 +279,6 @@ function App() {
         </div>
       </div>
       
-      {/* Zoom Reset Button */}
-      {zoom !== 1 && (
-        <button 
-          onClick={() => setZoom(1)}
-          className="absolute bottom-24 right-6 w-10 h-10 bg-white text-black rounded-full shadow-2xl flex items-center justify-center font-black text-xs z-50 animate-bounce"
-        >
-          1:1
-        </button>
-      )}
     </div>
   )
 }
