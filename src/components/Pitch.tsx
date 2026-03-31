@@ -56,18 +56,12 @@ const Pitch: React.FC<PitchProps> = ({ events, onPitchTap, filters, activeTeam, 
     const dy = endYRelative - startYRelative;
     const distance = Math.sqrt(dx * dx + dy * dy);
 
-    // If activeType is Poss. Lost, check for swipe
     if (activeType === 'Poss. Lost') {
-      if (distance > 5) { // Swipe detected
-        // Swipe up -> Team A lost possession
-        // Swipe down -> Team B lost possession
+      if (distance > 5) {
         const team: Team = dy < 0 ? 'A' : 'B';
         onPitchTap(startXRelative, startYRelative, team);
       }
     } else {
-      // Regular click logic
-      // Click on top half (y < 50) -> Team B attacking
-      // Click on bottom half (y > 50) -> Team A attacking
       const team: Team = startYRelative < 50 ? 'B' : 'A';
       onPitchTap(startXRelative, startYRelative, team);
     }
@@ -88,13 +82,13 @@ const Pitch: React.FC<PitchProps> = ({ events, onPitchTap, filters, activeTeam, 
   return (
     <div className="w-full h-full relative flex flex-col items-center">
       {/* Team A Label (Top) */}
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 pointer-events-none">
-        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-white/40 bg-white/5 px-6 py-1.5 rounded-full backdrop-blur-md border border-white/10 shadow-2xl">
+      <div className="absolute top-3 left-1/2 -translate-x-1/2 z-20 pointer-events-none w-full flex justify-center px-4">
+        <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-[0.3em] text-white/40 bg-white/5 px-4 py-1 rounded-full backdrop-blur-md border border-white/10 shadow-xl truncate max-w-[80%] text-center">
           {teamNames.A}
         </span>
       </div>
 
-      <div className="pitch-container w-full h-full shadow-2xl rounded-[32px] overflow-hidden border border-white/10 glass-card relative">
+      <div className="pitch-container w-full h-full shadow-2xl rounded-[24px] overflow-hidden border border-white/10 glass-card relative bg-[#1a2e18]">
         <svg 
           ref={svgRef}
           viewBox="0 0 100 100" 
@@ -120,29 +114,23 @@ const Pitch: React.FC<PitchProps> = ({ events, onPitchTap, filters, activeTeam, 
           
           <rect x="0" y="0" width="100" height="100" fill="url(#pitchGrad)" />
           
-          {/* Pitch Lines */}
           <rect x="0" y="0" width="100" height="100" fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="0.5" />
           
-          {/* Top Half (Team A Area) */}
           <rect x="15" y="0" width="70" height="18" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="0.5" />
           <rect x="35" y="0" width="30" height="6" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="0.5" />
           <path d="M 40 18 A 10 10 0 0 0 60 18" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="0.5" />
           
-          {/* Bottom Half (Team B Area) */}
           <rect x="15" y="82" width="70" height="18" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="0.5" />
           <rect x="35" y="94" width="30" height="6" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="0.5" />
           <path d="M 40 82 A 10 10 0 0 1 60 82" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="0.5" />
 
-          {/* Center Line and Circle */}
           <line x1="0" y1="50" x2="100" y2="50" stroke="rgba(255,255,255,0.3)" strokeWidth="0.8" />
           <circle cx="50" cy="50" r="10" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="0.8" />
           <circle cx="50" cy="50" r="0.8" fill="rgba(255,255,255,0.3)" />
 
-          {/* Goals */}
           <rect x="42.5" y="-1" width="15" height="1" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="1" />
           <rect x="42.5" y="100" width="15" height="1" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="1" />
 
-          {/* Events */}
           {filteredEvents.map(event => {
             const isShot = event.type === 'Shot' || event.type === 'Shot on Target';
             let radius = 1.8;
@@ -184,8 +172,8 @@ const Pitch: React.FC<PitchProps> = ({ events, onPitchTap, filters, activeTeam, 
       </div>
 
       {/* Team B Label (Bottom) */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 pointer-events-none">
-        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-white/40 bg-white/5 px-6 py-1.5 rounded-full backdrop-blur-md border border-white/10 shadow-2xl">
+      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 pointer-events-none w-full flex justify-center px-4">
+        <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-[0.3em] text-white/40 bg-white/5 px-4 py-1 rounded-full backdrop-blur-md border border-white/10 shadow-xl truncate max-w-[80%] text-center">
           {teamNames.B}
         </span>
       </div>
