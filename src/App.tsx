@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Pitch from './components/Pitch'
 import Controls from './components/Controls'
 import Stats from './components/Stats'
@@ -21,6 +21,10 @@ function App() {
 
   const [viewTeam, setViewTeam] = useState<Team | 'Both'>('Both');
   const [activeTab, setActiveTab] = useState<'Pitch' | 'Stats'>('Pitch');
+  const [zoom, setZoom] = useState(1);
+  const zoomContainerRef = useRef<HTMLDivElement>(null);
+  const initialDistance = useRef<number | null>(null);
+  const initialZoom = useRef<number>(1);
 
   const toggleFilter = (key: keyof typeof filters) => {
     setFilters(f => ({ ...f, [key]: !f[key] }));
@@ -42,9 +46,54 @@ function App() {
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
   };
 
+  // Pinch to zoom logic
+  useEffect(() => {
+    const container = zoomContainerRef.current;
+    if (!container) return;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      if (e.touches.length === 2) {
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        initialDistance.current = Math.sqrt(dx * dx + dy * dy);
+        initialZoom.current = zoom;
+      }
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches.length === 2 && initialDistance.current !== null) {
+        e.preventDefault();
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        const factor = distance / initialDistance.current;
+        const newZoom = Math.min(Math.max(initialZoom.current * factor, 0.5), 3);
+        setZoom(newZoom);
+      }
+    };
+
+    const handleTouchEnd = () => {
+      initialDistance.current = null;
+    };
+
+    container.addEventListener('touchstart', handleTouchStart, { passive: false });
+    container.addEventListener('touchmove', handleTouchMove, { passive: false });
+    container.addEventListener('touchend', handleTouchEnd);
+
+    return () => {
+      container.removeEventListener('touchstart', handleTouchStart);
+      container.removeEventListener('touchmove', handleTouchMove);
+      container.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [zoom]);
+
   return (
-    <div className="h-screen w-screen bg-black p-2 sm:p-3 flex items-center justify-center overflow-hidden font-sans">
-      <div className="flex flex-col h-full w-full max-w-[480px] bg-[#050505] text-[#e4e4e7] overflow-hidden shadow-2xl">
+    <div className="h-screen w-screen bg-black flex items-center justify-center overflow-hidden font-sans">
+      <div 
+        ref={zoomContainerRef}
+        className="flex flex-col h-full w-full max-w-[480px] bg-[#050505] text-[#e4e4e7] overflow-hidden shadow-2xl transition-transform duration-75 origin-center"
+        style={{ transform: `scale(${zoom})` }}
+      >
         {/* 1. Technical Header: Inputs & Scoreboard */}
         <div className="bg-[#0f0f0f] border-b border-white/[0.05] px-5 py-5 shrink-0 relative overflow-hidden">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-1 bg-emerald-500/20 blur-xl" />
@@ -175,6 +224,16 @@ function App() {
           />
         </div>
       </div>
+      
+      {/* Zoom Reset Button */}
+      {zoom !== 1 && (
+        <button 
+          onClick={() => setZoom(1)}
+          className="absolute bottom-24 right-6 w-10 h-10 bg-white text-black rounded-full shadow-2xl flex items-center justify-center font-black text-xs z-50 animate-bounce"
+        >
+          1:1
+        </button>
+      )}
     </div>
   )
 }
