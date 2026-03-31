@@ -142,6 +142,18 @@ const Pitch: React.FC<PitchProps> = ({ events, onPitchTap, filters, activeTeam, 
           <rect x="42.5" y="-1" width="15" height="1" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="1" />
           <rect x="42.5" y="100" width="15" height="1" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="1" />
 
+          {/* Heatmap Layer */}
+          {filters.Heatmap && events.map(e => (
+            <circle 
+              key={`heat-${e.id}`} 
+              cx={e.x} 
+              cy={e.y} 
+              r="12" 
+              fill="url(#heatGradient)" 
+              className="animate-pulse"
+            />
+          ))}
+
           {/* Events */}
           {filteredEvents.map(event => {
             const isShot = event.type === 'Shot' || event.type === 'Shot on Target';
