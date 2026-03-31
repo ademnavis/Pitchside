@@ -94,7 +94,7 @@ const Pitch: React.FC<PitchProps> = ({ events, onPitchTap, filters, activeTeam, 
         </span>
       </div>
 
-      <div className="pitch-container w-full h-full shadow-2xl rounded-[32px] overflow-hidden border border-white/10 glass-card relative">
+      <div className="pitch-container w-full h-full shadow-2xl overflow-hidden glass-card relative bg-[#1a2e18]">
         <svg 
           ref={svgRef}
           viewBox="0 0 100 100" 

@@ -44,7 +44,7 @@ function App() {
 
   return (
     <div className="h-screen w-screen bg-black p-2 sm:p-3 flex items-center justify-center overflow-hidden font-sans">
-      <div className="flex flex-col h-full w-full max-w-[480px] bg-[#050505] text-[#e4e4e7] rounded-[32px] border border-white/[0.05] overflow-hidden shadow-2xl">
+      <div className="flex flex-col h-full w-full max-w-[480px] bg-[#050505] text-[#e4e4e7] overflow-hidden shadow-2xl">
         {/* 1. Technical Header: Inputs & Scoreboard */}
         <div className="bg-[#0f0f0f] border-b border-white/[0.05] px-5 py-5 shrink-0 relative overflow-hidden">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-1 bg-emerald-500/20 blur-xl" />
@@ -138,7 +138,7 @@ function App() {
               </div>
 
               {/* Tactical Pitch Viewer */}
-              <div className="flex-1 bg-[#0a0a0a] border border-white/[0.05] rounded-[32px] p-2 relative flex items-center justify-center overflow-hidden shadow-2xl">
+              <div className="flex-1 bg-[#0a0a0a] p-2 relative flex items-center justify-center overflow-hidden">
                 <Pitch 
                   events={state.events} 
                   onPitchTap={addEvent}
